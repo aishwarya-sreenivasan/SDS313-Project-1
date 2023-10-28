@@ -1,0 +1,70 @@
+---
+title: <u>Emissions Analysis</u>
+author: "Aishwarya Sreenivasan"
+date: "09-20-2023"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+
+## **Introduction**
+
+Human emissions of greenhouse gases have been one of the primary causes of global warming, and present one of the world's most pressing challenges as we fight against climate change.The data in this analysis is sourced from the CORGIS Dataset Project, and allows for comparisons of various countries and regions in relation to overall emission trends.This data set contains data regarding the GDP, population, and kilotons of nitrous oxide and carbon dioxide produced in 2018 from countries around the world.
+
+For this analysis, I will be using kilotons of carbon dioxide emissions as the outcome variable, and the region, GDP, and population of a country as the predictor variables.
+
+![](pollution.jpg)
+(Image sourced from [National Geographic](https://education.nationalgeographic.org/resource/global-warming/))
+
+
+## **Outcome Variable Distribution**
+
+```{r echo = FALSE}
+library(ggplot2)
+emissions <- read.csv('Project1_emissions.csv')
+ggplot(emissions) + geom_histogram(aes(x=CO2_Produced),fill='dimgrey', bins = 20, color = 'black')  + labs(title='Frequency of Kilotons of Carbon Dioxide Emissions Around the World',x='Kilotons of Carbon Dioxide Emissions',y='Frequency') + theme_bw()
+```
+
+The histogram above shows the frequency of the kilotons of carbon dioxide emissions of each country in the data set. The data set is skewed to the right, with the median carbon dioxide emission being `r round(mean(emissions$CO2_Produced),2)` kilotons. The average carbon dioxide emission across these countries is `r round(median(emissions$CO2_Produced),2)` kilotons. The minimum carbon dioxide emission is `r min(emissions$CO2_Produced)` kilotons, which was produced by `r emissions$Country[emissions$CO2_Produced == min(emissions$CO2_Produced)]`, and the maximum carbon dioxide emission is `r max(emissions$CO2_Produced)` kilotons, which was produced by `r emissions$Country[emissions$CO2_Produced == max(emissions$CO2_Produced)]`.
+
+## **Bivariate Relationships**
+
+### *CO2 Emissions by Region*
+
+```{r echo = FALSE}
+ggplot(emissions) + geom_histogram(aes(x=CO2_Produced),bins = 15,col='black',fill='lightsalmon4') + xlab('Kilotons of Carbon Dioxide Emissions') + ylab('Frequency of Kilotons of Carbon Dioxide Emissions') + ggtitle('Distribution of Kilotons of Carbon Dioxide Emissions by Region') + facet_wrap(~Region) + theme_bw()
+```
+
+The set of histograms above show the frequency of the kilotons of carbon dioxide emissions within region. Through these graphs, we can deduce the relationship between the kilotons of carbon dioxide emissions and the region from which they originate. The table below shows the median kilotons of carbon dioxide emissions per region:
+
+```{r echo = FALSE}
+knitr::kable(aggregate(CO2_Produced~Region, data=emissions, FUN = median), col.names = c('Region', 'Median Kilotons of Carbon Dioxide Emissions'), full_width = FALSE)
+```
+
+Through these values, we can tell that countries in Asia/Pacific produced the most kilotons of carbon dioxide emissions in the world, followed by the countries in the Americas and the Middle East. Countries in Africa and Europe tended to produce relatively less carbon dioxide emissions.
+
+### *GDP VS CO2 Emissions*
+
+```{r echo = FALSE}
+ggplot(emissions) + geom_point(aes(x=GDP,y=CO2_Produced), pch=20, col='forestgreen') + ggtitle('GDP VS Kilotons of Carbon Dioxide Emissions') + xlab('GDP of Countries') + ylab('Kilotons of Carbon Dioxide Emissions') + theme_bw()
+```
+
+The scatter plot above shows the relationship between the kilotons of carbon dioxide emitted by a country based on it's GDP. The correlation coefficient between these two variables is `r round(cor(emissions$GDP, emissions$CO2_Produced), 2)`, indicating that there is a strong, positive correlation between these two variables. Thus, there is a strong association implying that countries with a higher GDP tend to emit more kilotons of carbon dioxide.
+
+### *Population VS CO2 Emissions*
+
+```{r echo = FALSE}
+ggplot(emissions) + geom_point(aes(x=Population,y=CO2_Produced), pch=20, col='darkorange2') + ggtitle('Population VS Kilotons of Carbon Dioxide Emissions') + xlab('Population of Countries') + ylab('Kilotons of Carbon Dioxide Emissions') + theme_bw()
+```
+
+The scatter plot above shows the relationship between the kilotons of carbon dioxide emitted by a country based on it's GDP. The correlation coefficient between these two variables is `r round(cor(emissions$Population, emissions$CO2_Produced), 2)`, indicating that there is a strong, positive correlation between these two variables. Thus, there is a strong association implying that countries with a higher population tend to emit more kilotons of carbon dioxide.
+
+## **Conclusion**
+
+Through this analysis, I was able to deduce the relationship between the kilotons of carbon dioxide emitted by a country with three factors: the region of the country, the GDP of the country, and the population of the country. I found that countries in Asia/Pacific tend to emit the most carbon dioxide in the world, while countries in Europe tend to emit the least. Additionally, I found that there is a strong positive correlation between the GDP of a country and it's carbon dioxide emissions, as well as the population of a country and it's carbon dioxide emissions. To further study this topic, research on the causes of carbon dioxide emissions in each country should be conducted, and as well research on more sustainable options so that countries can maintain a high level of productivity without emitting as much greenhouse gases.
+
+* References:
+  + “Global Emissions CSV File.” CORGIS Datasets Project, corgis-edu.github.io/corgis/csv/global_emissions/. Accessed 20 Sept. 2023. 
+  + “Global Warming.” Education, education.nationalgeographic.org/resource/global-warming/. Accessed 20 Sept. 2023. 
+  + Ritchie, Hannah, et al. “CO₂ and Greenhouse Gas Emissions.” Our World in Data, 11 May 2020, ourworldindata.org/co2-and-greenhouse-gas-emissions. Accessed 20 Sept. 2023.
